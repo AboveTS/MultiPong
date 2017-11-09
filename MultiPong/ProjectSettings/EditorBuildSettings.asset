@@ -4,4 +4,13 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/MultiPong.unity
+    guid: c716d4a6b9477d449aaf8343cc868780
+  - enabled: 1
+    path: Assets/JoinServerScene.unity
+    guid: 815c12b01cf44a047887371830c3bf35
+  - enabled: 1
+    path: Assets/HostServerScene.unity
+    guid: 6ffbdd0fb15556b4e962455c14ddd67b
