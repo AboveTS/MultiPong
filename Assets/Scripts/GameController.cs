@@ -14,7 +14,7 @@ public class GameController : MonoBehaviour {
 	}
 
 	void Spawn (int playerCount) {
-		for(int i = 0; i < playerCount; i++) {
+		for (int i = 0; i < playerCount; i++) {
 			GameObject currentPaddle = Instantiate(paddlePrefab, transform);
 			
 			float theta = i * Mathf.PI * 2 / playerCount;
@@ -25,7 +25,9 @@ public class GameController : MonoBehaviour {
 	}
 
 	void DestroyAll() {
-
+		foreach (GameObject paddle in GameObject.FindGameObjectsWithTag("Paddle")) {
+			Destroy(paddle);
+		}
 	}
 	
 	void Update () {
