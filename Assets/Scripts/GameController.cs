@@ -16,8 +16,11 @@ public class GameController : MonoBehaviour {
 	void Spawn (int playerCount) {
 		for(int i = 0; i < playerCount; i++) {
 			GameObject currentPaddle = Instantiate(paddlePrefab, transform);
+			
 			float theta = i * Mathf.PI * 2 / playerCount;
+			
 			currentPaddle.transform.Translate(Mathf.Cos(theta) * paddleDistance , Mathf.Sin(theta) * paddleDistance, 0);
+			currentPaddle.transform.Rotate(0, 0, Mathf.Rad2Deg * theta + 90);
 		}
 	}
 
