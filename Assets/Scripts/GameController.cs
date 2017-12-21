@@ -14,6 +14,10 @@ public class GameController : MonoBehaviour {
 	}
 
 	void Spawn (int playerCount) {
+		GameObject ball = Instantiate(ballPrefab, transform);
+
+		ball.GetComponent<Rigidbody2D>().velocity = new Vector2(Random.value * 100, Random.value * 100);
+
 		for (int i = 0; i < playerCount; i++) {
 			GameObject currentPaddle = Instantiate(paddlePrefab, transform);
 			
