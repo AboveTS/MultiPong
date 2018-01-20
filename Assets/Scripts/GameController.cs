@@ -6,18 +6,21 @@ public class GameController : MonoBehaviour {
 	public GameObject paddlePrefab;
 	public GameObject ballPrefab;
 	public int paddleDistance;
+	public float initialBallVelocity;
+
+	private int paddleCount = 10;
 
 	private GameObject playerPaddle;
+	private GameObject ball;
 
-	void Start () {
-		Spawn(10);
+	void Start() {
+		SpawnPaddles (paddleCount);
+
+		ball = Instantiate(ballPrefab, transform);
+		ResetBall();
 	}
 
-	void Spawn (int playerCount) {
-		GameObject ball = Instantiate(ballPrefab, transform);
-
-		ball.GetComponent<Rigidbody2D>().velocity = new Vector2(Random.value * 100, Random.value * 100);
-
+	void SpawnPaddles (int playerCount) {
 		for (int i = 0; i < playerCount; i++) {
 			GameObject currentPaddle = Instantiate(paddlePrefab, transform);
 			
@@ -28,13 +31,22 @@ public class GameController : MonoBehaviour {
 		}
 	}
 
-	void DestroyAll() {
+	void ResetBall() {
+		transform.position = new Vector2(0, 0);
+
+		float angle = Random.value * 2 * Mathf.PI;
+		ball.GetComponent<Rigidbody2D>().velocity = new Vector2(Mathf.Cos(angle) * initialBallVelocity, Mathf.Sin(angle) * initialBallVelocity);
+	}
+
+	void DestroyPaddles() {
 		foreach (GameObject paddle in GameObject.FindGameObjectsWithTag("Paddle")) {
 			Destroy(paddle);
 		}
 	}
 	
-	void Update () {
-		
+	void Update() {
+		if(Input.GetKeyDown("space")) {
+			ball.GetComponent<Rigidbody2D>().velocity *= 1.1f;
+		}
 	}
 }
