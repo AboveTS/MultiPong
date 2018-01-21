@@ -50,4 +50,8 @@ public class GameController : MonoBehaviour {
 	void Update() {
 
 	}
+
+	public float GetBallAngle() {
+		return Vector2.SignedAngle((Vector2) ball.GetComponent<Rigidbody2D>().velocity, Vector2.right);
+	}
 }
