@@ -249,7 +249,7 @@ MonoBehaviour:
   paddlePrefab: {fileID: 1444751817452072, guid: ce88389c12fb6f84e80ed2c8244a9bae,
     type: 2}
   ballPrefab: {fileID: 1202552037824744, guid: 3a0e3ddae2694574ab0c933e860a079f, type: 2}
-  paddleDistance: 130
+  paddleDistance: 160
   initialBallVelocity: 100
 --- !u!4 &1222669043
 Transform:

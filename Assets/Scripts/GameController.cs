@@ -21,7 +21,7 @@ public class GameController : MonoBehaviour {
 	}
 
 	void Update() {
-
+		Debug.DrawRay(new Vector3(0, 0, 0), new Vector3(Mathf.Cos(GetBallAngle()) * paddleDistance, Mathf.Sin(GetBallAngle()) * paddleDistance, 0));
 	}
 
 	/**
@@ -67,7 +67,7 @@ public class GameController : MonoBehaviour {
 		Returns the angle between the +X axis and the ball's velocity.
 	*/
 	public float GetBallAngle() {
-		return Vector2.SignedAngle((Vector2) ball.GetComponent<Rigidbody2D>().velocity, Vector2.right);
+		return Mathf.Deg2Rad * ((360 - Vector2.SignedAngle((Vector2) ball.GetComponent<Rigidbody2D>().velocity, Vector2.right)) % 360);
 	}
 
 	/**
