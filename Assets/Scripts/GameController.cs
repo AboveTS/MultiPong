@@ -31,13 +31,19 @@ public class GameController : MonoBehaviour {
 		for (int i = 0; i < playerCount; i++) {
 			GameObject currentPaddle = Instantiate(paddlePrefab, transform);
 			
-			float theta = i * Mathf.PI * 2 / playerCount;
+			float theta = (i + 0.5f) * Mathf.PI * 2 / playerCount;
 			
-			currentPaddle.transform.Translate(Mathf.Cos(theta) * paddleDistance , Mathf.Sin(theta) * paddleDistance, 0);
+			currentPaddle.transform.Translate(Mathf.Cos(theta) * paddleDistance, Mathf.Sin(theta) * paddleDistance, 0);
 			currentPaddle.transform.Rotate(0, 0, Mathf.Rad2Deg * theta + 90);
 
 			// Only the first paddle should have a player controller, the rest can be AI controlled
-			currentPaddle.AddComponent( i == 0 ? typeof(PlayerPaddleController) : typeof(AIPaddleController));
+			
+			if(i == 0) {
+				currentPaddle.AddComponent(typeof(PlayerPaddleController));
+			} else {
+				AIPaddleController ai = currentPaddle.AddComponent(typeof(AIPaddleController)) as AIPaddleController;
+				ai.paddleID = i; // i is local so it must be directly provided to the AI (there are likely cleaner solutions but it's just a single variable so I'll let it slide)
+			}
 		}
 	}
 
@@ -62,5 +68,12 @@ public class GameController : MonoBehaviour {
 	*/
 	public float GetBallAngle() {
 		return Vector2.SignedAngle((Vector2) ball.GetComponent<Rigidbody2D>().velocity, Vector2.right);
+	}
+
+	/**
+		Getter method for the player count.
+	*/
+	public int GetPaddleCount() {
+		return paddleCount;
 	}
 }
