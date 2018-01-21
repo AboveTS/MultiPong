@@ -20,7 +20,14 @@ public class GameController : MonoBehaviour {
 		ResetBall();
 	}
 
-	void SpawnPaddles (int playerCount) {
+	void Update() {
+
+	}
+
+	/**
+		Instantiates a specified number 'n' of paddles. 'n-1' of these will be AI controlled, the remaining one will be assigned a player controller.
+	*/
+	private void SpawnPaddles(int playerCount) {
 		for (int i = 0; i < playerCount; i++) {
 			GameObject currentPaddle = Instantiate(paddlePrefab, transform);
 			
@@ -34,23 +41,25 @@ public class GameController : MonoBehaviour {
 		}
 	}
 
-	void ResetBall() {
+	/**
+		Returns the ball to the arena's center and provides an 
+	*/
+	private void ResetBall() {
 		transform.position = new Vector2(0, 0);
 
 		float angle = Random.value * 2 * Mathf.PI;
 		ball.GetComponent<Rigidbody2D>().velocity = new Vector2(Mathf.Cos(angle) * initialBallVelocity, Mathf.Sin(angle) * initialBallVelocity);
 	}
 
-	void DestroyPaddles() {
+	private void DestroyPaddles() {
 		foreach (GameObject paddle in GameObject.FindGameObjectsWithTag("Paddle")) {
 			Destroy(paddle);
 		}
 	}
 	
-	void Update() {
-
-	}
-
+	/**
+		Returns the angle between the +X axis and the ball's velocity.
+	*/
 	public float GetBallAngle() {
 		return Vector2.SignedAngle((Vector2) ball.GetComponent<Rigidbody2D>().velocity, Vector2.right);
 	}
