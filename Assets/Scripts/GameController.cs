@@ -28,6 +28,9 @@ public class GameController : MonoBehaviour {
 			
 			currentPaddle.transform.Translate(Mathf.Cos(theta) * paddleDistance , Mathf.Sin(theta) * paddleDistance, 0);
 			currentPaddle.transform.Rotate(0, 0, Mathf.Rad2Deg * theta + 90);
+
+			// Only the first paddle should have a player controller, the rest can be AI controlled
+			currentPaddle.AddComponent( i == 0 ? typeof(PlayerPaddleController) : typeof(AIPaddleController));
 		}
 	}
 
@@ -45,8 +48,6 @@ public class GameController : MonoBehaviour {
 	}
 	
 	void Update() {
-		if(Input.GetKeyDown("space")) {
-			ball.GetComponent<Rigidbody2D>().velocity *= 1.1f;
-		}
+
 	}
 }
