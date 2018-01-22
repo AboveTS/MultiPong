@@ -11,7 +11,7 @@ public class AIPaddleController : MonoBehaviour {
 	void Start () {
 		master = transform.parent.gameObject.GetComponent<GameController>() as GameController;
 		
-		float range = 2 * Mathf.PI / master.GetPaddleCount();
+		float range = 2 * Mathf.PI / master.paddleCount;
 
 		minAngle = paddleID * range;		
 		angle = (paddleID + .5f) * range;
@@ -19,12 +19,12 @@ public class AIPaddleController : MonoBehaviour {
 	}
 
 	void Update () {		
-		float ballAngle = master.GetBallAngle(); // Radians
+		float ballAngle = master.ballAngle; // Radians
 		float da = (ballAngle - angle);
 			
-		Move(da / 50f);
+		Move(da * master.AIDampeningFactor);
 
-		if(paddleID == 9) {
+		if(false && paddleID == 9) {
 			Debug.Log("Ball Angle: " + (ballAngle * Mathf.Rad2Deg) + " | Paddle Angle: " + (angle * Mathf.Rad2Deg) + " | Delta Angle: " + (da * Mathf.Rad2Deg));
 		}
 	}

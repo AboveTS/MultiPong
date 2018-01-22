@@ -7,31 +7,55 @@ public class GameController : MonoBehaviour {
 	public GameObject ballPrefab;
 	public int paddleDistance;
 	public float initialBallVelocity;
+	public float AIDampeningFactor = 1/50f;
 
-	private int paddleCount = 10;
+	private int _paddleCount = 10;
+
+	private float PaddleConvergenceAngle;
 
 	private GameObject playerPaddle;
 	private GameObject ball;
 
+	/**
+		Returns the angle between the +X axis and the ball's velocity.
+	*/
+	public float ballAngle {
+		get {
+			return Mathf.Deg2Rad * ((360 - Vector2.SignedAngle((Vector2) ball.GetComponent<Rigidbody2D>().velocity, Vector2.right)) % 360);
+		}
+	}
+
+	/**
+		Getter for the player count.
+	*/
+	public int paddleCount {
+		get {
+			return _paddleCount;
+		}
+	}
+
 	void Start() {
-		SpawnPaddles (paddleCount);
+		SpawnPaddles(_paddleCount);
 
 		ball = Instantiate(ballPrefab, transform);
+		// Subscribe to the OnCollision2D event of the ball to prevent excessive recomputation of the ball angle
+		CollisionBroadcaster cb = ball.AddComponent<CollisionBroadcaster>() as CollisionBroadcaster;
+		cb.collisionDelegate = OnBallCollision;
 		ResetBall();
 	}
 
 	void Update() {
-		Debug.DrawRay(new Vector3(0, 0, 0), new Vector3(Mathf.Cos(GetBallAngle()) * paddleDistance, Mathf.Sin(GetBallAngle()) * paddleDistance, 0));
+		
 	}
 
 	/**
 		Instantiates a specified number 'n' of paddles. 'n-1' of these will be AI controlled, the remaining one will be assigned a player controller.
 	*/
-	private void SpawnPaddles(int playerCount) {
-		for (int i = 0; i < playerCount; i++) {
+	private void SpawnPaddles(int paddleCount) {
+		for (int i = 0; i < paddleCount; i++) {
 			GameObject currentPaddle = Instantiate(paddlePrefab, transform);
 			
-			float theta = (i + 0.5f) * Mathf.PI * 2 / playerCount;
+			float theta = (i + 0.5f) * Mathf.PI * 2 / paddleCount;
 			
 			currentPaddle.transform.Translate(Mathf.Cos(theta) * paddleDistance, Mathf.Sin(theta) * paddleDistance, 0);
 			currentPaddle.transform.Rotate(0, 0, Mathf.Rad2Deg * theta + 90);
@@ -39,9 +63,9 @@ public class GameController : MonoBehaviour {
 			// Only the first paddle should have a player controller, the rest can be AI controlled
 			
 			if(i == 0) {
-				currentPaddle.AddComponent(typeof(PlayerPaddleController));
+				currentPaddle.AddComponent<PlayerPaddleController>();
 			} else {
-				AIPaddleController ai = currentPaddle.AddComponent(typeof(AIPaddleController)) as AIPaddleController;
+				AIPaddleController ai = currentPaddle.AddComponent<AIPaddleController>();
 				ai.paddleID = i; // i is local so it must be directly provided to the AI (there are likely cleaner solutions but it's just a single variable so I'll let it slide)
 			}
 		}
@@ -62,18 +86,8 @@ public class GameController : MonoBehaviour {
 			Destroy(paddle);
 		}
 	}
-	
-	/**
-		Returns the angle between the +X axis and the ball's velocity.
-	*/
-	public float GetBallAngle() {
-		return Mathf.Deg2Rad * ((360 - Vector2.SignedAngle((Vector2) ball.GetComponent<Rigidbody2D>().velocity, Vector2.right)) % 360);
-	}
 
-	/**
-		Getter method for the player count.
-	*/
-	public int GetPaddleCount() {
-		return paddleCount;
+	private void OnBallCollision(Collision2D collision) {
+		Debug.Log("collision");
 	}
 }

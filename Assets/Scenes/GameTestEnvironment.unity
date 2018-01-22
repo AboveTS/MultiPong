@@ -250,7 +250,8 @@ MonoBehaviour:
     type: 2}
   ballPrefab: {fileID: 1202552037824744, guid: 3a0e3ddae2694574ab0c933e860a079f, type: 2}
   paddleDistance: 160
-  initialBallVelocity: 100
+  initialBallVelocity: 150
+  AIDampeningFactor: 0.05
 --- !u!4 &1222669043
 Transform:
   m_ObjectHideFlags: 0
