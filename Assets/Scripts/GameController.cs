@@ -38,8 +38,7 @@ public class GameController : MonoBehaviour {
 		SpawnPaddles(_paddleCount);
 
 		ball = Instantiate(ballPrefab, transform);
-		// Subscribe to the OnCollision2D event of the ball to prevent excessive recomputation of the ball angle
-		CollisionBroadcaster cb = ball.AddComponent<CollisionBroadcaster>() as CollisionBroadcaster;
+		CollisionBroadcaster cb = ball.AddComponent<CollisionBroadcaster>() as CollisionBroadcaster; // Subscribe to the OnCollision2D event of the ball to prevent excessive recomputation of the ball angle
 		cb.collisionDelegate = OnBallCollision;
 		ResetBall();
 	}
@@ -76,7 +75,7 @@ public class GameController : MonoBehaviour {
 	*/
 	private void ResetBall() {
 		transform.position = new Vector2(0, 0);
-
+ 
 		float angle = Random.value * 2 * Mathf.PI;
 		ball.GetComponent<Rigidbody2D>().velocity = new Vector2(Mathf.Cos(angle) * initialBallVelocity, Mathf.Sin(angle) * initialBallVelocity);
 	}
@@ -88,6 +87,17 @@ public class GameController : MonoBehaviour {
 	}
 
 	private void OnBallCollision(Collision2D collision) {
-		Debug.Log("collision");
+		// Compute partial solutions and combine (otherwise the math is crazy to read)
+		float m = Mathf.Tan(ballAngle);
+		float xb = ball.transform.position.x;
+		float yb = ball.transform.position.y;
+
+		float a = Mathf.Pow(m, 2) + 1;
+		float b = 2 * m * (yb - m * xb);
+		float c = Mathf.Pow(paddleDistance, 2) + m * xb * (2 * yb - m * xb) - Mathf.Pow(yb, 2);
+
+		float x = (-b + Mathf.Sqrt( Mathf.Pow(b, 2) - 4 * a * c ) * ( Mathf.Sign(ball.GetComponent<Rigidbody2D>().velocity.x >= 0 ? 1 : -1 ) )) / (2 * a);
+
+		Debug.Log(a + ", " + b + ", " + c);
 	}
 }

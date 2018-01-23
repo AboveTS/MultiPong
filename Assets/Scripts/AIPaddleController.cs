@@ -24,7 +24,7 @@ public class AIPaddleController : MonoBehaviour {
 			
 		Move(da * master.AIDampeningFactor);
 
-		if(false && paddleID == 9) {
+		if(paddleID == 0) { // This is just a debug blocker paddleID can't be zero here
 			Debug.Log("Ball Angle: " + (ballAngle * Mathf.Rad2Deg) + " | Paddle Angle: " + (angle * Mathf.Rad2Deg) + " | Delta Angle: " + (da * Mathf.Rad2Deg));
 		}
 	}
