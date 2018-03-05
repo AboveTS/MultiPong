@@ -19,12 +19,7 @@ public class GameController : MonoBehaviour {
 	/**
 		Returns the angle between the +X axis and the ball's velocity.
 	*/
-	public float ballAngle {
-		get {
-			return Mathf.Deg2Rad * ((360 - Vector2.SignedAngle((Vector2) ball.GetComponent<Rigidbody2D>().velocity, Vector2.right)) % 360);
-		}
-	}
-
+	public float ballAngle;
 	/**
 		Getter for the player count.
 	*/
@@ -41,6 +36,8 @@ public class GameController : MonoBehaviour {
 		CollisionBroadcaster cb = ball.AddComponent<CollisionBroadcaster>() as CollisionBroadcaster; // Subscribe to the OnCollision2D event of the ball to prevent excessive recomputation of the ball angle
 		cb.collisionDelegate = OnBallCollision;
 		ResetBall();
+
+		CalculateCollisionAngle();
 	}
 
 	void Update() {
@@ -87,17 +84,39 @@ public class GameController : MonoBehaviour {
 	}
 
 	private void OnBallCollision(Collision2D collision) {
-		// Compute partial solutions and combine (otherwise the math is crazy to read)
-		float m = Mathf.Tan(ballAngle);
-		float xb = ball.transform.position.x;
-		float yb = ball.transform.position.y;
+		CalculateCollisionAngle();
+	}
 
-		float a = Mathf.Pow(m, 2) + 1;
-		float b = 2 * m * (yb - m * xb);
-		float c = Mathf.Pow(paddleDistance, 2) + m * xb * (2 * yb - m * xb) - Mathf.Pow(yb, 2);
+	/** Returns the angle between the +x axis and the point where the ball will intersect with the arena boundary.
+		A great place to optimize, as this should be possible with a tricky formula in O(1) time.
 
-		float x = (-b + Mathf.Sqrt( Mathf.Pow(b, 2) - 4 * a * c ) * ( Mathf.Sign(ball.GetComponent<Rigidbody2D>().velocity.x >= 0 ? 1 : -1 ) )) / (2 * a);
+		The crappy workaround here uses an iterative depth-bounded binary search to get a decent approximation for the collision coordinate, and then finds the angle between it and RIGHT.
+	*/
+	public void CalculateCollisionAngle() {
+		const int depth = 10;
+		float diametricMultiplier = 0.5f;
+		float velocityAngle = Vector2.SignedAngle(ball.GetComponent<Rigidbody2D>().velocity, Vector2.right) * Mathf.Deg2Rad;
+		
+		Vector2 velocityBasisVector = new Vector2(Mathf.Cos(velocityAngle), Mathf.Sin(velocityAngle));
+		Vector2 coordinate = new Vector2(0, 0);
 
-		Debug.Log(a + ", " + b + ", " + c);
+		for(int i = 2; i < depth; i++) {
+			// (multiplier * diameter) * [cos angle, sin angle] + ball position
+			coordinate = diametricMultiplier * 2 * paddleDistance * velocityBasisVector + (Vector2) ball.transform.position;
+
+			float delta = 1 / Mathf.Pow(2, i);
+			// If ball is inside arena, move the point further along
+			if( Mathf.Sqrt(Mathf.Pow(coordinate.x, 2) + Mathf.Pow(coordinate.y, 2)) <= paddleDistance) {
+				diametricMultiplier += delta;
+			} else {
+			// If ball is outside the arena, move the point inwards
+				diametricMultiplier -= delta;
+			}
+		}
+
+		// Coordinate now contains a rough approximation of the intersection
+
+		ballAngle = -Mathf.Atan2(coordinate.y, coordinate.x);
+		Debug.Log(ballAngle);
 	}
 }
