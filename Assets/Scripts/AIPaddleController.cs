@@ -18,19 +18,14 @@ public class AIPaddleController : MonoBehaviour {
 		maxAngle = (paddleID + 1) * range;
 	}
 
-	void Update () {		
-		float ballAngle = master.ballAngle; // Radians
-		float da = (ballAngle - angle);
+	void Update () {
+		float da = (master.hitAngle - angle);
 			
 		Move(da * master.AIDampeningFactor);
-
-		if(paddleID == 0) { // This is just a debug blocker paddleID can't be zero here
-			Debug.Log("Ball Angle: " + (ballAngle * Mathf.Rad2Deg) + " | Paddle Angle: " + (angle * Mathf.Rad2Deg) + " | Delta Angle: " + (da * Mathf.Rad2Deg));
-		}
 	}
 
 	/**
-		Moves the paddle by a specified delta angle
+		Moves the paddle by a specified delta angle, while still constraining the paddle within it's boundaries.
 	*/
 	private void Move(float da) {
 		float newAngle = angle + da;
