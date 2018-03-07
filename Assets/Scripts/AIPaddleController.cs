@@ -28,7 +28,7 @@ public class AIPaddleController : MonoBehaviour {
 		Moves the paddle by a specified delta angle, while still constraining the paddle within it's boundaries.
 	*/
 	private void Move(float da) {
-		float newAngle = angle + da;
+		float newAngle = angle + da + Random.value / 100;
 
 		if(newAngle > maxAngle) newAngle = maxAngle;
 		if(newAngle < minAngle) newAngle = minAngle;
