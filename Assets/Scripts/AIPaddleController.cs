@@ -19,17 +19,22 @@ public class AIPaddleController : MonoBehaviour {
 	}
 
 	void Update () {
+		// Due to the cyclical nature of angles, we need to find the shortest path to a target angle - it may be more direct to go backwards past 0 on the circle than forwards to the angle.
 		float da = (master.hitAngle - angle);
+		float db = (Mathf.PI * 2 - da) % (Mathf.PI * 2);
+		// Select the shortest path
+		float d = Mathf.Min(da, db);
 			
-		Move(da * master.AIDampeningFactor);
+		Move(d * master.AIDampeningFactor);
 	}
 
 	/**
 		Moves the paddle by a specified delta angle, while still constraining the paddle within it's boundaries.
 	*/
 	private void Move(float da) {
-		float newAngle = angle + da + Random.value / 100;
+		float newAngle = angle + da;
 
+		// Constrain the angle within it's bounds
 		if(newAngle > maxAngle) newAngle = maxAngle;
 		if(newAngle < minAngle) newAngle = minAngle;
 

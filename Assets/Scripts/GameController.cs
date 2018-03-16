@@ -40,7 +40,7 @@ public class GameController : MonoBehaviour {
 	}
 
 	void Update() {
-		
+		CalculateHitAngle();
 	}
 
 	/**
@@ -83,6 +83,7 @@ public class GameController : MonoBehaviour {
 	}
 
 	private void OnBallCollision(Collision2D collision) {
+		ball.GetComponent<Rigidbody2D>().AddForce(new Vector2(Random.value * 100f - 50, Random.value * 100f - 50));
 		CalculateHitAngle();
 	}
 
